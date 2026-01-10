@@ -87,6 +87,16 @@ app.delete('/api/admin/users/:id', verifyAdmin, (req, res) => {
     });
 });
 
+app.get('/api/admin/env', verifyAdmin, (req, res) => {
+    res.json({
+        PORT: process.env.PORT,
+        JWT_SECRET: process.env.JWT_SECRET ? '***' + process.env.JWT_SECRET.slice(-4) : 'NOT SET',
+        LAST_FM_API_KEY: process.env.LAST_FM_API_KEY || process.env.LASTFM_API_KEY || 'NOT SET',
+        ADMIN_TOKEN: process.env.ADMIN_TOKEN ? '***' : 'NOT SET',
+        NODE_ENV: process.env.NODE_ENV
+    });
+});
+
 // --- Album Routes ---
 app.get('/api/albums', verifyToken, (req, res) => {
     db.all(`SELECT * FROM albums WHERE user_id = ? ORDER BY date_added DESC`, [req.userId], (err, rows) => {

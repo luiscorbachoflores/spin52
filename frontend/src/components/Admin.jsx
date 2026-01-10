@@ -8,6 +8,7 @@ export default function Admin() {
     const [token, setToken] = useState(sessionStorage.getItem('adminToken') || '');
     const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem('adminToken'));
     const [users, setUsers] = useState([]);
+    const [envVars, setEnvVars] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -25,6 +26,12 @@ export default function Admin() {
                 headers: { 'x-admin-token': token }
             });
             setUsers(res.data);
+
+            const envRes = await axios.get('/api/admin/env', {
+                headers: { 'x-admin-token': token }
+            });
+            setEnvVars(envRes.data);
+
             setError('');
         } catch (err) {
             setError('Acceso Denegado o Token Inválido');
@@ -123,6 +130,24 @@ export default function Admin() {
                         {users.length === 0 && !loading && (
                             <div className="p-12 text-center text-slate-400 font-medium">No hay usuarios</div>
                         )}
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden mt-8">
+                    <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h2 className="font-black text-slate-900 text-lg flex items-center gap-2">
+                            <Lock size={20} className="text-slate-400" /> Environment Variables
+                        </h2>
+                    </div>
+                    <div className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {Object.entries(envVars).map(([key, value]) => (
+                                <div key={key} className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{key}</p>
+                                    <p className="font-mono text-sm text-slate-700 font-bold truncate">{value}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </main>

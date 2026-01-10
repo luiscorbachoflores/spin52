@@ -240,28 +240,34 @@ export default function Dashboard({ user, onLogout }) {
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20">
             <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-xl">
                 <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
-                        <div className="flex items-center gap-4">
-                            <img src="/favicon.png" className="w-12 h-12 rounded-full ring-2 ring-sky-500/20" alt="Logo" />
-                            <div>
-                                <h1 className="text-2xl font-black italic tracking-tighter flex items-center gap-2">
-                                    <span className="text-white">Spin</span><span className="text-sky-500">52</span>
-                                    <Zap className="text-orange-500 fill-orange-500" size={20} />
-                                </h1>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6">
+                        {/* Top Row: Logo + Mobile Logout */}
+                        <div className="flex items-center justify-between md:justify-start w-full md:w-auto">
+                            <div className="flex items-center gap-4">
+                                <img src="/logo_new.png" className="w-12 h-12 object-contain" alt="Logo" />
+                                <div>
+                                    <h1 className="text-2xl font-black italic tracking-tighter flex items-center gap-2">
+                                        <span className="text-white">Spin</span><span className="text-sky-500">52</span>
+                                    </h1>
+                                </div>
                             </div>
+                            {/* Mobile Logout (Visible only on small screens) */}
+                            <button onClick={onLogout} className="md:hidden text-slate-500 hover:text-red-500 p-2">
+                                <LogOut size={20} />
+                            </button>
                         </div>
 
-                        {/* Navigation Tabs */}
-                        <div className="flex bg-slate-800/50 p-1 rounded-full overflow-hidden">
+                        {/* Navigation Tabs (Centered on Desktop, Full/Centered on Mobile) */}
+                        <div className="flex bg-slate-800/50 p-1 rounded-full overflow-hidden mx-auto md:mx-0">
                             {[
                                 { id: 'collection', label: 'Mi Colección', icon: Disc },
                                 { id: 'calendar', label: 'Calendario', icon: CalendarIcon },
                                 { id: 'community', label: 'Comunidad', icon: Globe },
                             ].map(tab => (
                                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                    className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeTab === tab.id
-                                            ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25'
-                                            : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                                    className={`px-4 sm:px-6 py-2 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeTab === tab.id
+                                        ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25'
+                                        : 'text-slate-400 hover:text-white hover:bg-slate-700'
                                         }`}
                                 >
                                     <tab.icon size={14} /> <span className="hidden sm:inline">{tab.label}</span>
@@ -269,7 +275,8 @@ export default function Dashboard({ user, onLogout }) {
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        {/* Desktop Logout (Hidden on mobile) */}
+                        <div className="hidden md:flex items-center gap-3">
                             <button onClick={onLogout} className="text-slate-500 hover:text-red-500 p-2"><LogOut size={20} /></button>
                         </div>
                     </div>
