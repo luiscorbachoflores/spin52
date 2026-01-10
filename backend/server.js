@@ -115,9 +115,20 @@ app.get('/api/admin/env', verifyAdmin, (req, res) => {
 
 // --- Album Routes ---
 app.get('/api/albums', verifyToken, (req, res) => {
-    db.all(`SELECT * FROM albums WHERE user_id = ? ORDER BY date_added DESC`, [req.userId], (err, rows) => {
+    db.all(`SELECT * FROM albums WHERE user_id = ? ORDER BY date_added DESC`, [req.userId], (err, albums) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(rows);
+
+        // Fetch history for these albums
+        db.all(`SELECT * FROM listening_history WHERE user_id = ?`, [req.userId], (err, history) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+            const albumsWithHistory = albums.map(album => ({
+                ...album,
+                listening_dates: history.filter(h => h.album_id === album.id).map(h => h.listened_at)
+            }));
+
+            res.status(200).json(albumsWithHistory);
+        });
     });
 });
 
@@ -215,6 +226,30 @@ app.put('/api/albums/:id', verifyToken, (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json({ message: 'Updated' });
     });
+});
+
+app.post('/api/albums/:id/history', verifyToken, (req, res) => {
+    const { date } = req.body; // Expects ISO date string
+    if (!date) return res.status(400).json({ error: 'Date required' });
+
+    db.run(`INSERT INTO listening_history (user_id, album_id, listened_at) VALUES (?, ?, ?)`,
+        [req.userId, req.params.id, date],
+        function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.status(200).json({ id: this.lastID, listened_at: date });
+        });
+});
+
+app.delete('/api/albums/:id/history', verifyToken, (req, res) => {
+    const { date } = req.body;
+    if (!date) return res.status(400).json({ error: 'Date required' });
+
+    db.run(`DELETE FROM listening_history WHERE user_id = ? AND album_id = ? AND listened_at = ?`,
+        [req.userId, req.params.id, date],
+        function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.status(200).json({ message: 'Deleted history entry' });
+        });
 });
 
 app.delete('/api/albums/:id', verifyToken, (req, res) => {

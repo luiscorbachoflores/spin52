@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Album Detail - MusicTrack</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+    <!-- Top Navigation Bar -->
+    <header
+        class="sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 lg:px-20 py-3">
+        <div class="max-w-[1280px] mx-auto flex items-center justify-between gap-8">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3 text-primary">
+                    <div class="size-8">
+                        <svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">MusicTrack
+                    </h2>
+                </div>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Library</a>
+                    <a class="text-sm font-medium text-primary" href="#">Collections</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Community</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Profile</a>
+                </nav>
+            </div>
+            <div class="flex flex-1 justify-end items-center gap-6">
+                <label class="hidden sm:flex flex-col min-w-40 max-w-64 w-full">
+                    <div class="flex w-full items-stretch rounded-lg bg-slate-200 dark:bg-slate-800 h-10">
+                        <div class="flex items-center justify-center pl-3 text-slate-500">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="form-input w-full border-none bg-transparent focus:ring-0 text-sm placeholder:text-slate-500"
+                            placeholder="Search albums, artists..." value="" />
+                    </div>
+                </label>
+                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-slate-200 dark:border-slate-700"
+                    data-alt="User profile avatar"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyEh2EwzA0GpZ0AtHOmPMtPN3v2hfT-Q-VW2_1uaCm65X2xF-BR4y4cOF8DD7Q7L1pHKSS4EFnDiZ4MRmRVZeXURXs_V-pQhhhIvsjJ2g0B0Zr2DcKCp0b-9JilGVMBHBXYG7-QQ66Oa08r8PHS1vX7y_TGE_7efv7SNqjOzl2ZRz5qTUykZ3SezXRx6UOGFtLUVDbQK_TEWwK_hqmyBmz7UYyZ-Pttp9LFsbRzUnYWv4Hl0oUqA0oCjo6Z4y5Qche-IliIzsuUJlC");'>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-[1280px] mx-auto px-6 lg:px-20 py-8">
+        <!-- Breadcrumbs -->
+        <nav class="flex flex-wrap gap-2 mb-8">
+            <a class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors"
+                href="#">Home</a>
+            <span class="text-slate-400 text-sm">/</span>
+            <a class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors"
+                href="#">Collections</a>
+            <span class="text-slate-400 text-sm">/</span>
+            <span class="text-slate-900 dark:text-white text-sm font-semibold">Midnight Melodies</span>
+        </nav>
+        <!-- Album Hero Section -->
+        <section class="flex flex-col lg:flex-row gap-10 mb-12">
+            <!-- Large Cover Art -->
+            <div class="w-full lg:w-[400px] shrink-0">
+                <div class="aspect-square rounded-xl shadow-2xl bg-slate-800 overflow-hidden border border-slate-200 dark:border-slate-800"
+                    data-alt="Neon-themed synthwave album cover with futuristic city silhouette"
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCDu-9G0HOghVoKMkVQLyLIav-P5hHjqxsYqBmkIpB0wOi7Q8wHjMRQHGswUvxGXW1ydswpXz1uunK4eihX6_ga0Gh41tmOFzwyMucmgezlhBoeYUW-Xc7v0zDw64jgUOREY5J2S1RmtM9GJdMlJ2EwZyI3ydw1bJTVNP4a28M3rWeKecUj8lLE7sCTAlGD_We3yeyOArfqJ2Ya5lPW-1UUhNocvabdMhoZbYVvkzKxcG1yDkgZZgRBPBDmuK12Rj83o3ZKXg5beJdF'); background-size: cover; background-position: center;">
+                </div>
+                <!-- Album Credits & Metadata -->
+                <div
+                    class="mt-8 p-6 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Album Credits</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Release Year</span>
+                            <span class="text-slate-900 dark:text-white font-medium">2023</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Label</span>
+                            <span class="text-slate-900 dark:text-white font-medium">Neon Pulse Records</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Producer</span>
+                            <span class="text-slate-900 dark:text-white font-medium">Alex Thorne</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Length</span>
+                            <span class="text-slate-900 dark:text-white font-medium">42:15</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Album Info & Interactions -->
+            <div class="flex-1">
+                <div class="flex flex-col @container">
+                    <div class="flex flex-col gap-4 mb-8">
+                        <div>
+                            <h1
+                                class="text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-2">
+                                Midnight Melodies</h1>
+                            <p class="text-xl text-primary font-bold">The Nocturnals</p>
+                            <p class="text-slate-500 mt-1">Electronic • Synthwave • Future Bass</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-6 mt-4">
+                            <!-- Status Dropdown -->
+                            <div class="flex flex-col min-w-40">
+                                <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1.5 pl-1">Status
+                                </p>
+                                <select
+                                    class="form-select bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium h-11 focus:border-primary focus:ring-primary">
+                                    <option selected="" value="listened">Listened</option>
+                                    <option value="listening">Listening</option>
+                                    <option value="to-listen">To Listen</option>
+                                </select>
+                            </div>
+                            <!-- Rating Stats -->
+                            <div class="flex flex-col">
+                                <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1.5 pl-1">Your
+                                    Rating</p>
+                                <div
+                                    class="flex items-center h-11 px-4 rounded-lg bg-primary/10 border border-primary/20">
+                                    <div class="flex gap-0.5 text-primary">
+                                        <span class="material-symbols-outlined filled-icon">star</span>
+                                        <span class="material-symbols-outlined filled-icon">star</span>
+                                        <span class="material-symbols-outlined filled-icon">star</span>
+                                        <span class="material-symbols-outlined filled-icon">star</span>
+                                        <span class="material-symbols-outlined">star</span>
+                                    </div>
+                                    <span class="ml-3 font-bold text-primary">4.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Rating Summary Component -->
+                    <div
+                        class="bg-slate-100 dark:bg-slate-900/50 p-6 rounded-xl mb-10 border border-slate-200 dark:border-slate-800/50">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Community Rating</h3>
+                        <div class="flex flex-wrap gap-x-12 gap-y-6">
+                            <div class="flex flex-col gap-1">
+                                <p class="text-slate-900 dark:text-white text-5xl font-black leading-none">4.5</p>
+                                <div class="flex gap-0.5 text-yellow-500">
+                                    <span class="material-symbols-outlined filled-icon">star</span>
+                                    <span class="material-symbols-outlined filled-icon">star</span>
+                                    <span class="material-symbols-outlined filled-icon">star</span>
+                                    <span class="material-symbols-outlined filled-icon">star</span>
+                                    <span class="material-symbols-outlined"
+                                        style="font-variation-settings: 'FILL' 0.5">star_half</span>
+                                </div>
+                                <p class="text-slate-500 text-sm mt-1">1,240 reviews</p>
+                            </div>
+                            <div class="grid min-w-[240px] flex-1 grid-cols-[20px_1fr_40px] items-center gap-y-2">
+                                <p class="text-slate-500 text-xs font-bold">5</p>
+                                <div
+                                    class="flex h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                                    <div class="rounded-full bg-primary" style="width: 60%;"></div>
+                                </div>
+                                <p class="text-slate-500 text-xs text-right">60%</p>
+                                <p class="text-slate-500 text-xs font-bold">4</p>
+                                <div
+                                    class="flex h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                                    <div class="rounded-full bg-primary" style="width: 25%;"></div>
+                                </div>
+                                <p class="text-slate-500 text-xs text-right">25%</p>
+                                <p class="text-slate-500 text-xs font-bold">3</p>
+                                <div
+                                    class="flex h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                                    <div class="rounded-full bg-primary" style="width: 10%;"></div>
+                                </div>
+                                <p class="text-slate-500 text-xs text-right">10%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- User Review Section -->
+                    <div class="mb-10">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">My Review</h3>
+                        <div
+                            class="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900">
+                            <div
+                                class="flex gap-2 p-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                                <button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500">
+                                    <span class="material-symbols-outlined text-[20px]">format_bold</span>
+                                </button>
+                                <button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500">
+                                    <span class="material-symbols-outlined text-[20px]">format_italic</span>
+                                </button>
+                                <button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500">
+                                    <span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+                                </button>
+                                <button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500">
+                                    <span class="material-symbols-outlined text-[20px]">link</span>
+                                </button>
+                            </div>
+                            <textarea
+                                class="w-full min-h-[160px] p-4 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-300 resize-none leading-relaxed"
+                                placeholder="Write your thoughts on this album..."></textarea>
+                            <div class="p-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                                <button
+                                    class="px-6 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-blue-600 transition-colors">
+                                    Save Review
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Favorite Tracks Section -->
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Tracklist</h3>
+                            <span class="text-xs font-bold text-slate-500 uppercase">10 Tracks</span>
+                        </div>
+                        <div class="space-y-1">
+                            <!-- Track Row -->
+                            <div
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-medium text-slate-400 w-4">1</span>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">Neon Sunset</p>
+                                        <p class="text-xs text-slate-500">The Nocturnals</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <span class="text-xs font-medium text-slate-500">4:21</span>
+                                    <button class="text-primary hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined filled-icon">favorite</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Track Row -->
+                            <div
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-medium text-slate-400 w-4">2</span>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">Digital Pulse
+                                        </p>
+                                        <p class="text-xs text-slate-500">The Nocturnals</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <span class="text-xs font-medium text-slate-500">3:45</span>
+                                    <button
+                                        class="text-slate-300 dark:text-slate-700 hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">favorite</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Track Row -->
+                            <div
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-medium text-slate-400 w-4">3</span>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">Midnight Drive
+                                        </p>
+                                        <p class="text-xs text-slate-500">The Nocturnals</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <span class="text-xs font-medium text-slate-500">5:12</span>
+                                    <button class="text-primary hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined filled-icon">favorite</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Track Row -->
+                            <div
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-medium text-slate-400 w-4">4</span>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">Synthetic Dreams
+                                        </p>
+                                        <p class="text-xs text-slate-500">The Nocturnals</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <span class="text-xs font-medium text-slate-500">4:08</span>
+                                    <button
+                                        class="text-slate-300 dark:text-slate-700 hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">favorite</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Suggested Albums -->
+        <section class="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-8">More from The Nocturnals</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <div class="group cursor-pointer">
+                    <div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 mb-3 overflow-hidden"
+                        data-alt="Abstract colorful music cover"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCOf5G8o5KBejXA_5gcYQE06JTMOFiwr6C712mJw1p-pKnUUQVpBTLeE30Xfs2BPoOiCclmC-CKAPzOKKo51YtJdMvL1EkTckkz_Ntr-UjcrE6KNEys9jfidaPQul7ePM1z7vwJPRz17kCiofq0WM9vfzQIUbJXZH6Z23HoPiOXb3gH6iN-ex1ZLbKEPEQIGMqsZt13QBYDyLqpG5Oz0FoHcGwdtsNckqZ3h0vtO8yfclo1SGuft33GjFgP-5ZBnV0f-9dPmXQOz1LN'); background-size: cover;">
+                    </div>
+                    <p
+                        class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                        Neon Horizon</p>
+                    <p class="text-xs text-slate-500">2021</p>
+                </div>
+                <div class="group cursor-pointer">
+                    <div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 mb-3 overflow-hidden"
+                        data-alt="Futuristic geometric design cover"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDeaKVrU0L0SR4NRJU25oFHIH8L_EECHmfNTj6um1GQyRLNTIEgF5FGzgPUcYxrGksiyshnuQHm9PB5AOiAfgU2XV7oRlnDrw7Hh3l0CZEul4QOsMTlCQkGGyVynG_1fCBOh54mUE_RQs6bFlfHlit-svCsrpuXi5B-tkAWVbcPE19Qwe4bH0UyDZredC8SV0mqQZGkPXsvFsfieCT-9dqEbM1p48xW2OX7gAhGJpjPdeSHKu2obW3L2CUfIgklRG28aJizyeUN2AkF'); background-size: cover;">
+                    </div>
+                    <p
+                        class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                        Electric Echoes</p>
+                    <p class="text-xs text-slate-500">2019</p>
+                </div>
+                <div class="group cursor-pointer">
+                    <div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 mb-3 overflow-hidden"
+                        data-alt="Deep blue night sky cover"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUDoVv7WtTGoI_NPILL57OzBhzk6Hcz9GElJmp89goyVCtUWmVWUj7HMnii3MtiiN31ywjach2FJ1wSUHdNLHnbHBIvWzd1N4sTG61XhB0vw6eNQKChhTlbLa0FhldcsCra1VGJJpFXMLoKUIwMj3gAaeTC6ousWPdNNaCdzdjw_h7rDeZuCo5jv52m67377ePEYXC6nsdlhvAgadLjYzFtCr1MnH8mhBCx-lXmXOAbnCfb26ibdZFRz01dY5AIn3wqSagBN47JUmN'); background-size: cover;">
+                    </div>
+                    <p
+                        class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                        Starlight Journey</p>
+                    <p class="text-xs text-slate-500">2018</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="py-12 mt-20 border-t border-slate-200 dark:border-slate-800 px-6 text-center">
+        <div class="flex justify-center items-center gap-2 text-primary mb-4">
+            <div class="size-6">
+                <svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <span class="font-bold tracking-tight">MusicTrack</span>
+        </div>
+        <p class="text-slate-500 text-sm">© 2023 MusicTrack. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

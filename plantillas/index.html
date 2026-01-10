@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Album Library Grid</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2233",
+                        "border-dark": "#232f48",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Spline Sans", sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #232f48;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside
+            class="w-64 flex-shrink-0 border-r border-border-dark bg-background-light dark:bg-background-dark flex flex-col">
+            <div class="p-6 flex items-center gap-3">
+                <div class="size-10 bg-primary rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined text-2xl">album</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">VinylCollect</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Personal Music Vault</p>
+                </div>
+            </div>
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary text-white font-medium" href="#">
+                    <span class="material-symbols-outlined">library_music</span>
+                    Library
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-surface-dark transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">explore</span>
+                    Discovery
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-surface-dark transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">person</span>
+                    Profile
+                </a>
+                <div class="pt-6 pb-2 px-4 uppercase text-[10px] font-bold tracking-wider text-slate-500">Playlists
+                </div>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-surface-dark transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">favorite</span>
+                    Favorites
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-surface-dark transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">history</span>
+                    Recent
+                </a>
+            </nav>
+            <div class="p-4 border-t border-border-dark">
+                <div
+                    class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-dark cursor-pointer transition-colors">
+                    <div class="size-10 rounded-full bg-cover bg-center" data-alt="User profile avatar close up"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAM4mrGtVBKsN6EigQfxsxWdSMBrC2l6chUKAguDk1KmzTuPCU3pKzJonMbgmLoPeC92OY9RS0ZKRZsEhwAP2_-BSz_oP9iUF7vB7Ur6SPlKs29rnZJ45RIc2cryLqsa6s0XpNlhzteAktDs_O-FNDhWzoaR5vHyY1nZGkj6vlR1KeRGQaoitTxThKjDCOmh25wEZXilUhGaGDViD_kLmbJzYoKaGLpz9LCf737SCsoVICHNjZe8YE2SmrH5F0yQMOkPfv1bmqtX2IQ')">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">Alex Carter</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Pro Collector</p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500">settings</span>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col h-full bg-background-light dark:bg-background-dark">
+            <!-- Top Navigation Bar -->
+            <header
+                class="h-20 flex items-center justify-between px-8 border-b border-border-dark bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-10">
+                <div class="flex items-center gap-6 flex-1 max-w-2xl">
+                    <div class="relative w-full">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">search</span>
+                        <input
+                            class="w-full bg-slate-200 dark:bg-surface-dark border-none rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-primary text-sm"
+                            placeholder="Search your collection..." type="text" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 ml-8">
+                    <button
+                        class="size-10 flex items-center justify-center rounded-xl bg-slate-200 dark:bg-surface-dark text-slate-600 dark:text-white hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-4 h-10 rounded-xl bg-primary text-white font-bold text-sm tracking-wide">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        ADD ALBUM
+                    </button>
+                </div>
+            </header>
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+                <!-- Page Title & Filters -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold">Your Albums</h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">482 albums in your collection</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button
+                            class="flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-white text-xs font-bold">
+                            All
+                        </button>
+                        <button
+                            class="flex h-9 items-center justify-center gap-2 rounded-lg bg-slate-200 dark:bg-surface-dark px-4 text-xs font-medium hover:bg-slate-300 dark:hover:bg-border-dark transition-colors">
+                            Listened
+                            <span class="material-symbols-outlined text-base">expand_more</span>
+                        </button>
+                        <button
+                            class="flex h-9 items-center justify-center gap-2 rounded-lg bg-slate-200 dark:bg-surface-dark px-4 text-xs font-medium hover:bg-slate-300 dark:hover:bg-border-dark transition-colors">
+                            Want to listen
+                            <span class="material-symbols-outlined text-base">expand_more</span>
+                        </button>
+                        <button
+                            class="flex h-9 items-center justify-center gap-2 rounded-lg bg-slate-200 dark:bg-surface-dark px-4 text-xs font-medium hover:bg-slate-300 dark:hover:bg-border-dark transition-colors">
+                            Genre
+                            <span class="material-symbols-outlined text-base">expand_more</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Album Grid -->
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+                    <!-- Album Card 1 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Vibrant abstract colorful album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAeNv5eEUb2dfFayNs-HGBgUroiiC_KURxd0B-TNnV16RYi0vzc6XJdjfx-Tu1QDSSmz8zUCEGc801R0Cykb1qVVevnm6eOdvpgioTpOqHdQarVInePAq4jXPwVKTj7oig1B7yXJuPVwDYNy35-M9sGtUF2R8_H7138JrgZ-Sct1rk-Z3HGrPkZ4xwUkhQ5T4SZuNwJAOLhJA4kMmCup44jHYuoFGNYzc84CrQT3ojtLWoFm3_G5yHB8ae9YbAQtb7Up1RMnuKuQmjI')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-green-500/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">LISTENED</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Future
+                                Nostalgia</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Dua Lipa</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 2 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Classic jazz club aesthetic album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDDa_4XBuniejKvuxj9nutde6b-RMRxx-csN3ZcNai-dxGLN7H3b8SkfGKq1wT7n_LsGoaSqe1I26LEjh1cYQv1sVy9cHXkH6PKzPFTslpUBajlO3NlX3cN3OF4Itds6eGmiW-aVJR3IRLFA1WRL7kQIBid1tdtI-t09_dE-5FmBc1tjMQeZcbT1T6r6kehfSNJcjhlhFjqInYjiGLm9w7ETH_l4LwxNAy0pD_jo7HjsKTaMJynkrAuLOFRDcZlTQ69Vfy0tMnMlcTt')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-primary/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">WANT
+                                    TO LISTEN</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Kind of
+                                Blue</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Miles Davis</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 3 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Indie rock neon lighting album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA-PS1TTVCd-xHerHXLrzHG4F-X4rEtYAoTRzEJpa2JWoz81qtiTRDI9y2I3KnhDjCOKSc2R0a1tR13ZS3FI03SFfD5jk317mGknm4b22Xvb_ryTjhq4vCR5FUKc7INfEHXMseX6purglRJt13wjtX1Zoiz694ySReDGIwvNrTqxsVCM_a8fw7vPg_sULOitzA46KNOL34C7Pt5cRH6kBsmiVESvn3vQJUSvmn3upRp_s2FurTmMyPLzgll4nDehsL6QpJR_HnZvCfP')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-green-500/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">LISTENED</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Currents
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tame Impala</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 4 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Electronic synthesizer focused album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvQT5OFjnC6WRH0X_G3ltfM7V_IWDjJiO7SjFOWJNJXUN9_EVCde7u_ifxeKymSdTORsJs7qiFhOvGgmUTgTGyCMhGncKOZM9qOsJcdMw3yJNzIhzIqH78dUwkykyk9Ur5odtvVDxbMeeZxv-xLbIj2574-kPcw1MSV2CiFXqixxq3GlS1CrtUcFwPinAibFBKLPI9xaOMG8WUDABuY0y4u-Ir9i2F511SFb_gqjUu9m_3ErKsq3gjfU2HQkukvn0Ya2vjDmpjDo1a')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-primary/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">WANT
+                                    TO LISTEN</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Discovery
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Daft Punk</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 5 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Moody black and white photography album"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCgSbn5z8D0y5T6uxPM-HLmQYq6uYIIC4wHBgojWOySusbzlhB1Gsu-HXUP_-OJpMEtXBT2Wc9ptKrRD3_0RiAOkFBNEcibMSLAPYHT9RwL5IluCxuo9xXa_zPWyMu5Tt9rPUwln-jq986vW1lzrdvuzjDyoAqg5X38F5T153XfTHFImtfITL039t0TzVungfQ6GthyUzlxcboLOsa94yCLmJzSlvhHNcZ1pFm2oy76QPJQuyJagw-pfJ5U-2-qT9hqx8oQs40KyqAI')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-green-500/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">LISTENED</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">After
+                                Hours</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">The Weeknd</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 6 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Minimalist geometric shape album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCLgvIr7AIEkidK85naM_WdnorcFoOmpOImlp1kE46bsFecm8ju9Xs-VqxCVs3x6pe_SchmThbRftTijk08mSyupft0fAbf8BOvYVdfMzFKdF0DnDOg1GgYyL34-5e2JIGgi9PnhKfale_AhBacuyKVowPdkLEraKOHRSUDdtcBN00bZYzcIJ5KyQn4VNwzxZjZ4ik7J_nwZnSABKmcMg6wkb8bWYSP3YS7n4y74oCkyD5-oUr7vuSvIrURbZxEXGwxfTZLf3iEycWO')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-primary/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">WANT
+                                    TO LISTEN</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Plastic
+                                Beach</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Gorillaz</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 7 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Techno music pattern album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuATSorV2VgZUkjrYTie_vWa5nuTN554gAgCtJmg1z1KC2yCT_gd-p-fqhXEkdMhq2VAH4_Yg5Ky3LS7BU4t1V2_EKPN5ch9Lz6FpbzxMcmTrRLaPg7forZHVQdRtSDgOQfFR_YtuIXR0evZaJQ91yWl3vZoY5LXQVukBIKh1czxXOzinaqpCVfIw23GGvHnjDeRHXXcUgoWgtCltLoi-eyeTmDje7F0YtZD5hLOx2qNDYElC2YOkgqLHPQpVokRu4rcoDr79IUWWmEd')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-green-500/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">LISTENED</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">A Moon
+                                Shaped Pool</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Radiohead</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 8 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Classic rock concert album cover"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBCnSJLNNP7HHDO4-c_fZbEQdPn0UDpOydXYg91dNfCOJ9ku0S9yZEOqOTbGJ08GUp81MkpTfOUQHJdx8WpoinCr8HN_VksxSUW1hRDVsVP5JQat_KaIcZle5s5Y4uCdeoj496DO1p3d3OWOSxfdFdlEriOaCJAndpObbQaCwKFBHxQJxnuEGtG6z92ga3Rfsn4iX3UkFA6x95K6TDJzTcZRuFZz7rGo21MlQunk8lqqYg4ellkINKzBciE-8T3bNPrVWGckgNCvRPo')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-primary/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">WANT
+                                    TO LISTEN</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Rumours
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Fleetwood Mac</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 9 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Acoustic guitar close up album"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxlhy8O9qcteszXyu0Roe7QvHMtS6akTPS73zZBoGA4KimoPfnv-pO4HzPnZa0QJM3rYv9WpxmYUE2IgOT1Y1jPwdGgDT6HBbuEE9CaHNDPXGarpybAY6hiO9wEX5z73ZFJ7-7eYZcZoPIjEqkBE9SQvEq4x9wBWl-RxZeKg9bfON5W1ggdZ3BmF0ptt7tiHXUvo_CqCdxfZv8eBjAnUhPXweh0w2Eo1kwizm4cc8mOk1avu5mcIHuoNFHI2XCMiSBkjgh6ze6Sxo-')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-green-500/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">LISTENED</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Folklore
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Taylor Swift</p>
+                        </div>
+                    </div>
+                    <!-- Album Card 10 -->
+                    <div class="group flex flex-col gap-3">
+                        <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-dark shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                data-alt="Modern pop neon colors album"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDokbYZPDOpH_x7llEIVsbLLswzdzvK4lDpdy3_hnPioKbwVDg4Mxx6WADI6uZrhyYrC7fK90AoA1c0kntVtJlk7clWoVLAnfmDVUk6-RGWEL4Xi6XxdT5BU0vDSOgx7vj_BniexQvdsq-kYFTY_Wf8UfD3x6G9lSMa42kQKT5eF-ndqSyZXhXsPuL4Gadd6ev5gmCYYnfOoM7JvYhXdvlZ9NkL3OfVgfO5Xg4arqVWZPoMwJyeIF72NilwL2uYAvHaTzJsHuihC_DH')">
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-primary/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">WANT
+                                    TO LISTEN</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                <button
+                                    class="size-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm truncate group-hover:text-primary transition-colors">Melodrama
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Lorde</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -37,9 +37,27 @@ function initDb() {
             FOREIGN KEY (user_id) REFERENCES users (id)
         )`);
 
-        // Migration: Add listened_at if not exists (lazy way)
+        // Listening History Table
+        db.run(`CREATE TABLE IF NOT EXISTS listening_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            album_id INTEGER NOT NULL,
+            listened_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (album_id) REFERENCES albums (id)
+        )`);
+
+        // Migration: Add listened_at if not exists (lazy way) check - kept for backward compat for now but ideally moved to history
         db.run(`ALTER TABLE albums ADD COLUMN listened_at DATETIME`, (err) => {
             // Silence error if column exists
+        });
+
+        // Migration to populate history from old listened_at if empty
+        db.get("SELECT count(*) as count FROM listening_history", (err, row) => {
+            if (!err && row.count === 0) {
+                db.run(`INSERT INTO listening_history (user_id, album_id, listened_at) 
+                         SELECT user_id, id, listened_at FROM albums WHERE listened_at IS NOT NULL`);
+            }
         });
 
         // Milestones Events (to track if we showed the animation)
