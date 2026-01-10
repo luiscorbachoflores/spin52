@@ -5,6 +5,8 @@ import Dashboard from './components/Dashboard';
 import AlbumDetail from './components/AlbumDetail';
 import Admin from './components/Admin';
 
+import api from './api';
+
 // Wrapper for protected routes
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -29,6 +31,19 @@ const AppLayout = () => {
     localStorage.removeItem('user');
     setUser(null);
   };
+
+  useEffect(() => {
+    const verifyToken = async () => {
+      if (!user) return;
+      try {
+        await api.get('/me');
+      } catch (error) {
+        console.error("Token invalid", error);
+        handleLogout();
+      }
+    };
+    verifyToken();
+  }, []);
 
   return (
     <Routes>

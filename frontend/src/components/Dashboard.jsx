@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
     Plus, Search, Star, Music, Trash2, Headphones, Calendar as CalendarIcon,
-    CheckCircle2, Trophy, Heart, Clock, PlayCircle, LogOut, Disc, Filter, Loader2, Zap, Users, Globe
+    CheckCircle2, Trophy, Heart, Clock, PlayCircle, LogOut, Disc, Filter, Loader2, Zap, Users, Globe, MessageSquare, ArrowUpDown
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
@@ -145,12 +145,15 @@ export default function Dashboard({ user, onLogout }) {
     const [communityAlbums, setCommunityAlbums] = useState([]);
 
     const [loading, setLoading] = useState(true);
-    const [commLoading, setCommLoading] = useState(false);
+    const [blogPosts, setBlogPosts] = useState([]);
+    const [newBlogPost, setNewBlogPost] = useState("");
+    const [postingBlog, setPostingBlog] = useState(false);
 
     // Modal & Search
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState("Todos");
+    const [sortBy, setSortBy] = useState("date_added"); // date_added, title, artist, status
     const [apiSearchQuery, setApiSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [searchingApi, setSearchingApi] = useState(false);
@@ -165,12 +168,11 @@ export default function Dashboard({ user, onLogout }) {
         } catch (error) { console.error(error); } finally { setLoading(false); }
     };
 
-    const fetchCommunity = async () => {
-        setCommLoading(true);
+    const fetchBlog = async () => {
         try {
-            const res = await api.get('/community-albums');
-            setCommunityAlbums(res.data);
-        } catch (error) { console.error(error); } finally { setCommLoading(false); }
+            const res = await api.get('/blog');
+            setBlogPosts(res.data);
+        } catch (error) { console.error(error); }
     };
 
     useEffect(() => {
@@ -178,8 +180,8 @@ export default function Dashboard({ user, onLogout }) {
     }, []);
 
     useEffect(() => {
-        if (activeTab === 'community' && communityAlbums.length === 0) {
-            fetchCommunity();
+        if (activeTab === 'blog') {
+            fetchBlog();
         }
     }, [activeTab]);
 
@@ -187,13 +189,21 @@ export default function Dashboard({ user, onLogout }) {
     const listeningCount = albums.filter(a => a.status === 'Escuchando').length;
     const progress = (completedCount / 52) * 100;
 
-    // Filters
+    // Filters & Sorting
     const getFilteredAlbums = (sourceList) => {
-        return sourceList.filter(album => {
+        let filtered = sourceList.filter(album => {
             const matchesSearch = album.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 album.artist.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesFilter = filterStatus === "Todos" || album.status === filterStatus;
             return matchesSearch && matchesFilter;
+        });
+
+        return filtered.sort((a, b) => {
+            if (sortBy === 'title') return a.title.localeCompare(b.title);
+            if (sortBy === 'artist') return a.artist.localeCompare(b.artist);
+            if (sortBy === 'status') return a.status.localeCompare(b.status);
+            // Default: date_added (desc)
+            return new Date(b.date_added) - new Date(a.date_added);
         });
     };
 
@@ -209,6 +219,16 @@ export default function Dashboard({ user, onLogout }) {
             setNewAlbum({ title: "", artist: "", cover: "", rating: 5, review: "", favorites: "", status: "Pendiente" });
             setApiSearchQuery(""); setSearchResults([]);
         } catch (error) { console.error(error); }
+    };
+
+    const handlePostBlog = async (e) => {
+        e.preventDefault();
+        setPostingBlog(true);
+        try {
+            await api.post('/blog', { content: newBlogPost });
+            setNewBlogPost("");
+            await fetchBlog();
+        } catch (error) { console.error(error); } finally { setPostingBlog(false); }
     };
     const updateStatus = async (id, newStatus) => {
         const oldAlbums = [...albums];
@@ -262,7 +282,7 @@ export default function Dashboard({ user, onLogout }) {
                             {[
                                 { id: 'collection', label: 'Mi Colección', icon: Disc },
                                 { id: 'calendar', label: 'Calendario', icon: CalendarIcon },
-                                { id: 'community', label: 'Comunidad', icon: Globe },
+                                { id: 'blog', label: 'Blog', icon: MessageSquare },
                             ].map(tab => (
                                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                                     className={`px-4 sm:px-6 py-2 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeTab === tab.id
@@ -312,6 +332,61 @@ export default function Dashboard({ user, onLogout }) {
             <main className="max-w-7xl mx-auto px-6 mt-8">
                 {activeTab === 'calendar' ? (
                     <CalendarView albums={albums} />
+                ) : activeTab === 'blog' ? (
+                    <div className="max-w-2xl mx-auto space-y-8">
+                        {/* New Post Form */}
+                        <div className="bg-white rounded-[2rem] p-6 shadow-xl border border-slate-100">
+                            <h2 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
+                                <MessageSquare className="text-sky-500" /> Nueva Entrada
+                            </h2>
+                            <form onSubmit={handlePostBlog} className="space-y-4">
+                                <textarea
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-sky-500 font-medium text-slate-700 resize-none min-h-[100px]"
+                                    placeholder="Comparte algo con la comunidad..."
+                                    value={newBlogPost}
+                                    onChange={e => setNewBlogPost(e.target.value)}
+                                    required
+                                />
+                                <div className="flex justify-end">
+                                    <button
+                                        type="submit"
+                                        disabled={postingBlog}
+                                        className="bg-sky-500 hover:bg-sky-400 text-white px-6 py-2 rounded-xl font-bold text-sm shadow-lg shadow-sky-500/20 transition-all disabled:opacity-50"
+                                    >
+                                        {postingBlog ? 'Publicando...' : 'Publicar'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* Blog Stream */}
+                        <div className="space-y-6">
+                            {blogPosts.map((post) => (
+                                <div key={post.id} className="bg-white rounded-[2rem] p-6 shadow-md border border-slate-100 relative overflow-hidden">
+                                    {/* Owner Badge */}
+                                    {post.username === user.username && (
+                                        <div className="absolute top-0 right-0 bg-sky-500 text-white text-[10px] uppercase font-black px-3 py-1 rounded-bl-xl">
+                                            Tú
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center font-black text-slate-400 text-lg uppercase">
+                                            {post.username[0]}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-slate-800">{post.username}</div>
+                                            <div className="text-xs text-slate-400 font-medium">
+                                                {new Date(post.created_at).toLocaleString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-600 leading-relaxed whitespace-pre-wrap pl-14">
+                                        {post.content}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 ) : (
                     <>
                         <div className="flex justify-between items-center mb-8">
@@ -324,14 +399,27 @@ export default function Dashboard({ user, onLogout }) {
                                         value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-                                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                                    className="bg-white border border-slate-200 rounded-xl px-4 text-xs font-black uppercase outline-none"
-                                >
-                                    <option>Todos</option>
-                                    <option>Escuchado</option>
-                                    <option>Escuchando</option>
-                                    <option>Pendiente</option>
-                                </select>
+                                <div className="flex gap-2">
+                                    <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
+                                        className="bg-white border border-slate-200 rounded-xl px-4 text-xs font-black uppercase outline-none"
+                                    >
+                                        <option>Todos</option>
+                                        <option>Escuchado</option>
+                                        <option>Escuchando</option>
+                                        <option>Pendiente</option>
+                                    </select>
+                                    <div className="relative">
+                                        <select value={sortBy} onChange={e => setSortBy(e.target.value)}
+                                            className="appearance-none bg-white border border-slate-200 rounded-xl pl-4 pr-8 py-3 text-xs font-black uppercase outline-none cursor-pointer"
+                                        >
+                                            <option value="date_added">Reciente</option>
+                                            <option value="artist">Artista</option>
+                                            <option value="title">Título</option>
+                                            <option value="status">Estado</option>
+                                        </select>
+                                        <ArrowUpDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                    </div>
+                                </div>
                             </div>
 
                             {activeTab === 'collection' && (
@@ -353,21 +441,26 @@ export default function Dashboard({ user, onLogout }) {
                                         />
                                         <div className="absolute top-4 left-4"><StatusBadge status={album.status} /></div>
 
-                                        {/* Community Owner Badge */}
-                                        {activeTab === 'community' && album.username && (
-                                            <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 ring-1 ring-white/20">
-                                                <Users size={12} className="text-sky-400" /> {album.username}
-                                            </div>
-                                        )}
-
                                         {/* Actions only for own collection */}
                                         {activeTab === 'collection' && (
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                                                 <div className="flex justify-end mb-auto"><button onClick={(e) => { e.stopPropagation(); deleteAlbum(album.id); }} className="bg-red-500 p-2 rounded-full text-white"><Trash2 size={16} /></button></div>
                                                 <div className="flex gap-2">
-                                                    {['Pendiente', 'Escuchando', 'Escuchado'].map((s) => (
-                                                        <button key={s} onClick={(e) => { e.stopPropagation(); updateStatus(album.id, s); }} className={`flex-1 py-2 text-[9px] font-black uppercase rounded-lg ${album.status === s ? 'bg-sky-500 text-white' : 'bg-slate-800 text-zinc-400'}`}>{s.slice(0, 4)}</button>
-                                                    ))}
+                                                    {['Pendiente', 'Escuchando', 'Escuchado'].map((s) => {
+                                                        const icons = {
+                                                            'Pendiente': <Clock size={18} />,
+                                                            'Escuchando': <Headphones size={18} />,
+                                                            'Escuchado': <CheckCircle2 size={18} />
+                                                        };
+                                                        return (
+                                                            <button key={s} onClick={(e) => { e.stopPropagation(); updateStatus(album.id, s); }}
+                                                                className={`flex-1 py-3 flex items-center justify-center rounded-xl transition-colors ${album.status === s ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/30' : 'bg-slate-800/90 text-slate-400 hover:bg-slate-700 hover:text-white backdrop-blur-md'}`}
+                                                                title={s}
+                                                            >
+                                                                {icons[s]}
+                                                            </button>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         )}

@@ -68,6 +68,14 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+app.get('/api/me', verifyToken, (req, res) => {
+    db.get('SELECT id, username FROM users WHERE id = ?', [req.userId], (err, user) => {
+        if (err) return res.status(500).json({ error: 'Server error' });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    });
+});
+
 // --- Admin Routes ---
 app.get('/api/admin/users', verifyAdmin, (req, res) => {
     db.all(`SELECT id, username, created_at FROM users`, [], (err, rows) => {
@@ -80,10 +88,18 @@ app.delete('/api/admin/users/:id', verifyAdmin, (req, res) => {
     db.serialize(() => {
         db.run(`DELETE FROM albums WHERE user_id = ?`, [req.params.id]);
         db.run(`DELETE FROM milestones WHERE user_id = ?`, [req.params.id]);
+        db.run(`DELETE FROM blog WHERE user_id = ?`, [req.params.id]); // Also delete user's blog posts
         db.run(`DELETE FROM users WHERE id = ?`, [req.params.id], function (err) {
             if (err) return res.status(500).json({ error: err.message });
             res.status(200).json({ message: 'User deleted' });
         });
+    });
+});
+
+app.delete('/api/admin/blog/:id', verifyAdmin, (req, res) => {
+    db.run(`DELETE FROM blog WHERE id = ?`, [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Post deleted' });
     });
 });
 
@@ -124,6 +140,34 @@ app.get('/api/community-albums', verifyToken, (req, res) => {
     db.all(sql, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json(rows);
+    });
+});
+
+app.get('/api/blog', verifyToken, (req, res) => {
+    const sql = `
+        SELECT blog.*, users.username 
+        FROM blog 
+        JOIN users ON blog.user_id = users.id 
+        ORDER BY blog.created_at DESC
+    `;
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(rows);
+    });
+});
+
+app.post('/api/blog', verifyToken, (req, res) => {
+    const { content } = req.body;
+    if (!content) return res.status(400).json({ error: 'Content is required' });
+
+    db.run(`INSERT INTO blog (user_id, content) VALUES (?, ?)`, [req.userId, content], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        // Return the created post with username (need to fetch username or pass it)
+        // Ideally we fetch it back to be sure
+        db.get(`SELECT blog.*, users.username FROM blog JOIN users ON blog.user_id = users.id WHERE blog.id = ?`, [this.lastID], (err, row) => {
+            if (err) return res.status(500).json({ error: 'Error fetching created post' });
+            res.status(201).json(row);
+        });
     });
 });
 
@@ -210,8 +254,8 @@ app.get('/api/album-info', verifyToken, async (req, res) => {
         if (!response.data.album) return res.json({ tracks: [] });
 
         const tracks = Array.isArray(response.data.album.tracks.track)
-            ? response.data.album.tracks.track.map(t => t.name)
-            : [response.data.album.tracks.track.name];
+            ? response.data.album.tracks.track.map(t => ({ name: t.name, duration: parseInt(t.duration) }))
+            : [{ name: response.data.album.tracks.track.name, duration: parseInt(response.data.album.tracks.track.duration) }];
 
         res.json({
             tracks,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Trash2, Users, Lock, LogOut } from 'lucide-react';
+import { Shield, Trash2, Users, Lock, LogOut, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,6 +8,7 @@ export default function Admin() {
     const [token, setToken] = useState(sessionStorage.getItem('adminToken') || '');
     const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem('adminToken'));
     const [users, setUsers] = useState([]);
+    const [blogPosts, setBlogPosts] = useState([]);
     const [envVars, setEnvVars] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -51,6 +52,18 @@ export default function Admin() {
             setUsers(users.filter(u => u.id !== id));
         } catch (err) {
             alert('Error al eliminar');
+        }
+    };
+
+    const handleDeletePost = async (id) => {
+        if (!window.confirm('¿Eliminar esta entrada?')) return;
+        try {
+            await axios.delete(`/api/admin/blog/${id}`, {
+                headers: { 'x-admin-token': token }
+            });
+            setBlogPosts(blogPosts.filter(p => p.id !== id));
+        } catch (err) {
+            alert('Error al eliminar entrada');
         }
     };
 
@@ -129,6 +142,36 @@ export default function Admin() {
                         ))}
                         {users.length === 0 && !loading && (
                             <div className="p-12 text-center text-slate-400 font-medium">No hay usuarios</div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden mt-8">
+                    <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h2 className="font-black text-slate-900 text-lg flex items-center gap-2">
+                            <MessageSquare size={20} className="text-slate-400" /> Blog ({blogPosts.length})
+                        </h2>
+                    </div>
+                    <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
+                        {blogPosts.map(post => (
+                            <div key={post.id} className="p-6 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                                <div className="flex-1 pr-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-black text-xs text-sky-500">{post.username}</span>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase">{new Date(post.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <p className="text-sm text-slate-600 line-clamp-2">{post.content}</p>
+                                </div>
+                                <button
+                                    onClick={() => handleDeletePost(post.id)}
+                                    className="bg-red-50 text-red-500 p-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+                        ))}
+                        {blogPosts.length === 0 && (
+                            <div className="p-12 text-center text-slate-400 font-medium">No hay entradas</div>
                         )}
                     </div>
                 </div>

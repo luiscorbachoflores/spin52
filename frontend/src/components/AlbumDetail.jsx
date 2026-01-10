@@ -150,25 +150,60 @@ export default function AlbumDetail() {
                             {/* Tracklist Selection */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Selecciona tus favoritas</h3>
-                                    <span className="text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-lg">{formData.favorites.length} seleccionadas</span>
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Lista de Canciones</h3>
+                                    <span className="text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-lg">
+                                        {formData.favorites.length} favoritas
+                                    </span>
                                 </div>
 
                                 {tracks.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                        {tracks.map((track, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => toggleFavorite(track)}
-                                                className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-between group ${formData.favorites.includes(track)
-                                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                                                    }`}
-                                            >
-                                                <span className="truncate">{i + 1}. {track}</span>
-                                                {formData.favorites.includes(track) && <Music size={14} />}
-                                            </button>
-                                        ))}
+                                    <div className="flex flex-col gap-2">
+                                        {/* Total Duration Header if available */}
+                                        {tracks.some(t => t.duration) && (
+                                            <div className="text-right text-xs font-bold text-slate-400 mb-2">
+                                                Duración Total: {(() => {
+                                                    const totalSeconds = tracks.reduce((acc, curr) => acc + (curr.duration || 0), 0);
+                                                    const m = Math.floor(totalSeconds / 60);
+                                                    const s = totalSeconds % 60;
+                                                    return `${m} min ${s} s`;
+                                                })()}
+                                            </div>
+                                        )}
+
+                                        {tracks.map((trackObj, i) => {
+                                            // Handle both object {name, duration} and string (legacy/fallback)
+                                            const trackName = typeof trackObj === 'string' ? trackObj : trackObj.name;
+                                            const duration = typeof trackObj === 'object' ? trackObj.duration : 0;
+
+                                            const formatTime = (seconds) => {
+                                                if (!seconds) return '';
+                                                const m = Math.floor(seconds / 60);
+                                                const s = seconds % 60;
+                                                return `${m}:${s.toString().padStart(2, '0')}`;
+                                            };
+
+                                            return (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => toggleFavorite(trackName)}
+                                                    className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-between group ${formData.favorites.includes(trackName)
+                                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
+                                                        : 'bg-white border border-slate-100 text-slate-700 hover:bg-slate-50'
+                                                        }`}
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <span className={`text-xs font-black w-6 ${formData.favorites.includes(trackName) ? 'text-indigo-200' : 'text-slate-300'}`}>{i + 1}</span>
+                                                        <span className="truncate">{trackName}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <span className={`text-xs font-medium ${formData.favorites.includes(trackName) ? 'text-indigo-200' : 'text-slate-400'}`}>
+                                                            {formatTime(duration)}
+                                                        </span>
+                                                        {formData.favorites.includes(trackName) && <Music size={14} />}
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 ) : (
                                     <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl">
