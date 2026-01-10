@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: album-tracker-2026
+    restart: unless-stopped
+    ports:
+      - "5612:3000"
+    volumes:
+      - ./data:/app/backend/data 
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - LAST_FM_API_KEY=${LAST_FM_API_KEY}
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+    networks:
+      - album-net
+
+networks:
+  album-net:
+    driver: bridge
