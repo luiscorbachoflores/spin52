@@ -14,6 +14,65 @@ const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.JWT_SECRET || 'secret-key-change-me';
 const LASTFM_API_KEY = process.env.LAST_FM_API_KEY || process.env.LASTFM_API_KEY;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+
+let spotifyToken = null;
+let spotifyTokenExpiresAt = 0;
+
+const getSpotifyToken = async () => {
+    if (spotifyToken && Date.now() < spotifyTokenExpiresAt) return spotifyToken;
+
+    if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+        console.log("Spotify credentials missing");
+        return null;
+    }
+
+    try {
+        const params = new URLSearchParams();
+        params.append('grant_type', 'client_credentials');
+
+        const response = await axios.post('https://accounts.spotify.com/api/token', params, {
+            headers: {
+                'Authorization': 'Basic ' + Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64'),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        spotifyToken = response.data.access_token;
+        spotifyTokenExpiresAt = Date.now() + (response.data.expires_in * 1000) - 60000; // 1 min buffer
+        return spotifyToken;
+    } catch (error) {
+        console.error("Error fetching Spotify token", error.message);
+        return null;
+    }
+};
+
+const searchSpotifyAlbum = async (artist, albumTitle) => {
+    const token = await getSpotifyToken();
+    if (!token) return null;
+
+    try {
+        const query = `album:${albumTitle} artist:${artist}`;
+        const response = await axios.get(`https://api.spotify.com/v1/search`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+            params: {
+                q: query,
+                type: 'album',
+                limit: 1
+            }
+        });
+
+        const items = response.data.albums.items;
+        if (items && items.length > 0) {
+            return items[0].external_urls.spotify;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error searching Spotify", error.message);
+        return null;
+    }
+};
 
 app.use(cors());
 app.use(express.json());
@@ -182,18 +241,26 @@ app.post('/api/blog', verifyToken, (req, res) => {
     });
 });
 
-app.post('/api/albums', verifyToken, (req, res) => {
-    const { title, artist, cover, status, rating, review, favorites, dateAdded, listenedAt } = req.body;
-    const sql = `INSERT INTO albums (user_id, title, artist, cover, status, rating, review, favorites, date_added, listened_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+app.post('/api/albums', verifyToken, async (req, res) => {
+    const { title, artist, cover, status, rating, review, favorites, dateAdded, listenedAt, spotifyUrl } = req.body;
+
+    let finalSpotifyUrl = spotifyUrl;
+    if (!finalSpotifyUrl) {
+        // Auto-match
+        finalSpotifyUrl = await searchSpotifyAlbum(artist, title);
+    }
+
+    const sql = `INSERT INTO albums (user_id, title, artist, cover, status, rating, review, favorites, date_added, listened_at, spotify_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
         req.userId, title, artist, cover, status, rating, review, favorites,
         dateAdded || new Date(),
-        listenedAt || (status === 'Escuchado' ? new Date() : null)
+        listenedAt || (status === 'Escuchado' ? new Date() : null),
+        finalSpotifyUrl || null
     ];
 
     db.run(sql, params, function (err) {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ id: this.lastID, ...req.body });
+        res.status(200).json({ id: this.lastID, ...req.body, spotify_url: finalSpotifyUrl });
     });
 });
 
@@ -214,6 +281,7 @@ app.put('/api/albums/:id', verifyToken, (req, res) => {
     if (title !== undefined) { updates.push('title = ?'); params.push(title); }
     if (artist !== undefined) { updates.push('artist = ?'); params.push(artist); }
     if (cover !== undefined) { updates.push('cover = ?'); params.push(cover); }
+    if (spotifyUrl !== undefined) { updates.push('spotify_url = ?'); params.push(spotifyUrl); }
 
     if (updates.length === 0) return res.json({ message: 'No changes' });
 

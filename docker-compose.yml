@@ -13,6 +13,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - LAST_FM_API_KEY=${LAST_FM_API_KEY}
       - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
     networks:
       - album-net
 

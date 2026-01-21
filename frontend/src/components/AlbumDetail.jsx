@@ -212,6 +212,49 @@ export default function AlbumDetail() {
                         </div>
                     </div>
                 </section>
+
+                {/* Spotify Section - Moved below columns */}
+                <div className="bg-surface-dark/50 p-6 rounded-2xl border border-border-dark mb-12">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                        <span className="bg-[#1DB954] text-black p-1 rounded-full"><PlayCircle size={16} /></span> Spotify
+                    </h3>
+
+                    {album.spotify_url ? (
+                        <div className="space-y-4">
+                            <iframe
+                                className="w-full rounded-xl shadow-lg h-[152px] lg:h-[600px]"
+                                src={`https://open.spotify.com/embed/album/${(album.spotify_url.match(/album\/([a-zA-Z0-9]+)/) || [])[1]}?utm_source=generator&theme=0`}
+                                frameBorder="0"
+                                allowFullScreen=""
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"
+                            ></iframe>
+
+                        </div>
+                    ) : (
+                        <div>
+                            <p className="text-slate-400 text-sm mb-3">No hay enlace de Spotify asociado.</p>
+                            <input
+                                type="text"
+                                placeholder="Pegar enlace de álbum de Spotify..."
+                                className="w-full bg-background-dark border border-border-dark p-3 rounded-xl outline-none focus:border-primary text-sm text-white"
+                                onKeyDown={async (e) => {
+                                    if (e.key === 'Enter') {
+                                        const url = e.currentTarget.value;
+                                        const optimistic = { ...album, spotify_url: url };
+                                        setAlbum(optimistic);
+                                        try {
+                                            await api.put(`/albums/${id}`, { spotifyUrl: url });
+                                        } catch (err) {
+                                            fetchAlbum();
+                                        }
+                                    }
+                                }}
+                            />
+                            <p className="text-[10px] text-slate-600 mt-2">Presiona Enter para guardar.</p>
+                        </div>
+                    )}
+                </div>
             </main>
         </div>
     );

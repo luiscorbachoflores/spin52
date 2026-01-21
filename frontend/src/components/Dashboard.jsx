@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Plus, Search, Calendar as CalendarIcon, CheckCircle2, Clock, PlayCircle,
     LogOut, Disc, Loader2, MessageSquare, ArrowUpDown, ExternalLink, Menu, X,
-    Library, LayoutGrid, Newspaper
+    Library, LayoutGrid, Newspaper, Star
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -114,8 +114,13 @@ const CalendarView = ({ albums }) => {
 
                     return (
                         <div key={day}
-                            onClick={() => hasAlbums && setSelectedDay({ day, albums: daysAlbums })}
-                            className={`aspect-square rounded-xl border relative overflow-hidden group transition-all cursor-pointer ${isToday ? 'border-primary ring-1 ring-primary/50' : 'border-border-dark bg-background-dark hover:border-primary/50'
+                            onClick={(e) => {
+                                if (hasAlbums) {
+                                    e.stopPropagation();
+                                    setSelectedDay({ day, albums: daysAlbums });
+                                }
+                            }}
+                            className={`aspect-square rounded-xl border relative overflow-hidden group transition-all ${hasAlbums ? 'cursor-pointer hover:border-primary/50' : 'cursor-default'} ${isToday ? 'border-primary ring-1 ring-primary/50' : 'border-border-dark bg-background-dark'
                                 }`}
                         >
                             <span className={`absolute top-2 left-2 text-[10px] font-bold z-20 pointer-events-none drop-shadow-md ${hasAlbums ? 'text-white' : 'text-slate-600'
@@ -124,7 +129,7 @@ const CalendarView = ({ albums }) => {
                             </span>
 
                             {hasAlbums ? (
-                                <div className="absolute inset-0 flex flex-wrap h-full w-full">
+                                <div className="absolute inset-0 flex flex-wrap h-full w-full pointer-events-none">
                                     {daysAlbums.map((album, idx) => (
                                         <div key={idx} className="relative flex-grow h-full" style={{ flexBasis: `${100 / daysAlbums.length}%` }}>
                                             <img
@@ -138,7 +143,7 @@ const CalendarView = ({ albums }) => {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate-800">
+                                <div className="w-full h-full flex items-center justify-center text-slate-800" style={{ pointerEvents: 'none' }}>
                                     <Disc size={16} />
                                 </div>
                             )}
@@ -149,7 +154,7 @@ const CalendarView = ({ albums }) => {
 
             {/* Day Details Modal (Inside Component) */}
             {selectedDay && (
-                <div className="absolute inset-0 z-30 bg-surface-dark/95 backdrop-blur-md rounded-xl p-8 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute inset-0 z-50 bg-surface-dark/95 backdrop-blur-md rounded-xl p-8 flex flex-col">
                     <div className="flex justify-between items-start mb-6">
                         <h3 className="text-xl font-bold text-white">
                             Listened on {selectedDay.day} {monthNames[month]}
@@ -540,9 +545,10 @@ export default function Dashboard({ user, onLogout }) {
                     <div className="relative bg-surface-dark rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto border border-border-dark">
                         <div className="p-8 border-b border-border-dark">
                             <h2 className="text-2xl font-bold text-white"><span className="text-primary">Añadir</span> Álbum</h2>
+                            <p className="text-sm text-slate-500 mt-1">Busca en Last.fm para añadir a tu colección</p>
                             <div className="flex gap-2 mt-4">
                                 <input className="flex-1 bg-background-dark border border-border-dark rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
-                                    placeholder="Buscar en Spotify..." value={apiSearchQuery} onChange={e => setApiSearchQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchExternal()} />
+                                    placeholder="Buscar en Last.fm..." value={apiSearchQuery} onChange={e => setApiSearchQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchExternal()} />
                                 <button onClick={searchExternal} className="bg-primary text-white p-3 rounded-xl hover:bg-blue-600 transition-colors">{searchingApi ? <Loader2 className="animate-spin" /> : <Search />}</button>
                             </div>
                             {searchResults.length > 0 && (
@@ -555,37 +561,53 @@ export default function Dashboard({ user, onLogout }) {
                                 </div>
                             )}
                         </div>
-                        <form onSubmit={handleAddAlbum} className="p-8 space-y-4 text-slate-300">
-                            <input className="w-full bg-background-dark border border-border-dark p-3 rounded-xl outline-none focus:border-primary" placeholder="Título" required value={newAlbum.title} onChange={e => setNewAlbum({ ...newAlbum, title: e.target.value })} />
-                            <input className="w-full bg-background-dark border border-border-dark p-3 rounded-xl outline-none focus:border-primary" placeholder="Artista" required value={newAlbum.artist} onChange={e => setNewAlbum({ ...newAlbum, artist: e.target.value })} />
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <select className="bg-background-dark border border-border-dark p-3 rounded-xl outline-none focus:border-primary" value={newAlbum.status} onChange={e => setNewAlbum({ ...newAlbum, status: e.target.value })}>
-                                    <option value="Pendiente">Pendiente</option><option value="Escuchando">Escuchando</option><option value="Escuchado">Escuchado</option>
-                                </select>
-                                <input className="bg-background-dark border border-border-dark p-3 rounded-xl outline-none focus:border-primary" placeholder="URL de la Portada" value={newAlbum.cover} onChange={e => setNewAlbum({ ...newAlbum, cover: e.target.value })} />
-                            </div>
-
-                            {newAlbum.status === 'Escuchado' && (
-                                <div className="space-y-2 bg-background-dark p-4 rounded-xl border border-border-dark">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Valoración</label>
-                                        <span className="text-primary font-bold bg-primary/10 px-2 py-0.5 rounded text-xs">{newAlbum.rating}</span>
+                        {newAlbum.title ? (
+                            <form onSubmit={handleAddAlbum} className="p-8 space-y-6 text-slate-300">
+                                {/* Selected Album Preview */}
+                                <div className="flex items-center gap-4 bg-background-dark p-4 rounded-xl border border-border-dark">
+                                    <img src={newAlbum.cover} className="w-16 h-16 rounded-lg object-cover bg-slate-800" alt="" onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop" }} />
+                                    <div>
+                                        <h3 className="font-bold text-white text-lg">{newAlbum.title}</h3>
+                                        <p className="text-primary font-medium">{newAlbum.artist}</p>
                                     </div>
-                                    <input
-                                        type="range" min="0" max="5" step="0.5"
-                                        className="w-full h-1 appearance-none bg-surface-dark rounded-full cursor-pointer accent-primary"
-                                        value={newAlbum.rating}
-                                        onChange={e => setNewAlbum({ ...newAlbum, rating: parseFloat(e.target.value) })}
-                                    />
+                                    <button type="button" onClick={() => setNewAlbum({ title: "", artist: "", cover: "", rating: 5, review: "", favorites: "", status: "Pendiente" })} className="ml-auto text-slate-500 hover:text-white p-2">
+                                        <X size={20} />
+                                    </button>
                                 </div>
-                            )}
 
-                            <div className="flex gap-4 pt-4">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-background-dark hover:bg-surface-dark py-3 rounded-xl font-bold text-xs uppercase transition-colors">Cancelar</button>
-                                <button type="submit" className="flex-[2] bg-primary hover:bg-blue-600 text-white py-3 rounded-xl font-bold text-xs uppercase shadow-lg shadow-primary/20 transition-all">Guardar</button>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Estado</label>
+                                    <select className="w-full bg-background-dark border border-border-dark p-3 rounded-xl outline-none focus:border-primary" value={newAlbum.status} onChange={e => setNewAlbum({ ...newAlbum, status: e.target.value })}>
+                                        <option value="Pendiente">Pendiente</option><option value="Escuchando">Escuchando</option><option value="Escuchado">Escuchado</option>
+                                    </select>
+                                </div>
+
+                                {newAlbum.status === 'Escuchado' && (
+                                    <div className="space-y-2 bg-background-dark p-4 rounded-xl border border-border-dark">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Valoración</label>
+                                            <span className="text-primary font-bold bg-primary/10 px-2 py-0.5 rounded text-xs">{newAlbum.rating}</span>
+                                        </div>
+                                        <input
+                                            type="range" min="0" max="5" step="0.5"
+                                            className="w-full h-1 appearance-none bg-surface-dark rounded-full cursor-pointer accent-primary"
+                                            value={newAlbum.rating}
+                                            onChange={e => setNewAlbum({ ...newAlbum, rating: parseFloat(e.target.value) })}
+                                        />
+                                    </div>
+                                )}
+
+                                <div className="flex gap-4 pt-2">
+                                    <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-background-dark hover:bg-surface-dark py-3 rounded-xl font-bold text-xs uppercase transition-colors">Cancelar</button>
+                                    <button type="submit" className="flex-[2] bg-primary hover:bg-blue-600 text-white py-3 rounded-xl font-bold text-xs uppercase shadow-lg shadow-primary/20 transition-all">Guardar en Colección</button>
+                                </div>
+                            </form>
+                        ) : (
+                            <div className="p-8 text-center text-slate-500 italic pb-12">
+                                Busca un álbum para continuar...
                             </div>
-                        </form>
+                        )}
                     </div>
                 </div>
             )}

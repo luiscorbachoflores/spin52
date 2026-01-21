@@ -60,6 +60,11 @@ function initDb() {
             }
         });
 
+        // Migration: Add spotify_url to albums
+        db.run(`ALTER TABLE albums ADD COLUMN spotify_url TEXT`, (err) => {
+            // Silence error if column exists
+        });
+
         // Milestones Events (to track if we showed the animation)
         db.run(`CREATE TABLE IF NOT EXISTS milestones (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

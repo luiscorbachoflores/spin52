@@ -1,0 +1,22 @@
+# Tasks
+
+- [x] Create Roadmap
+- [x] Spotify Integration
+    - [x] Add `spotify_url` to Database (`database.js`)
+    - [x] Implement Spotify Auth & Search in Backend (`server.js`)
+    - [x] Automate Spotify URL fetching on Album Add (`server.js`)
+    - [x] Update frontend to display Spotify Embed (`AlbumDetail.jsx`)
+    - [x] Remove manual Spotify URL input (`Dashboard.jsx`)
+    - [x] Update `docker-compose.yml` with env vars
+- [/] Verification
+    - [ ] Rebuild and Restart Containers <!-- id: 7 -->
+    - [ ] Verify Auto-Match on New Album <!-- id: 8 -->
+    - [ ] Verify Spotify Embed Playback <!-- id: 9 -->
+    - [ ] Verify Calendar History View <!-- id: 10 -->
+- [ ] **Spotify Integration**
+    - [ ] Backend: Add OAuth routes (login, callback, token)
+    - [ ] Backend: Add Library management routes (check, save)
+    - [ ] Frontend: Create SpotifyAuthContext
+    - [ ] Frontend: Create WebPlayer component
+    - [ ] Frontend: Update AlbumDetail to use auth and player
+    - [ ] Frontend: Integrate WebPlayer in App.jsx
